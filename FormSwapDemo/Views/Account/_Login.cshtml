@@ -1,0 +1,27 @@
+﻿@model FormSwapDemo.Models.LoginModel
+
+
+@using (Html.BeginForm(new { ReturnUrl = ViewBag.ReturnUrl })) {
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary()
+
+    <fieldset>
+        <legend>Log in Form</legend>
+        <h2>Zaloguj się</h2>
+        <ol>
+            <li>
+                @Html.LabelFor(m => m.Login)
+                @Html.TextBoxFor(m => m.Login)              
+            </li>
+            <li>
+                @Html.LabelFor(m => m.Password)
+                @Html.PasswordFor(m => m.Password)               
+            </li>
+
+        </ol>
+        <input type="submit" value="Zaloguj się" />
+    </fieldset>
+    <p>
+        <a href="#" class="registerLink">Utwórz Konto</a> jeśli nie posiadasz konta.
+    </p>
+}

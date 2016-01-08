@@ -1,0 +1,80 @@
+﻿@model FormSwapDemo.Models.ContactModel
+
+
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Osobista Książka Adresowa</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
+    <meta name="viewport" content="width=device-width"/>
+    <link href="/Content/site.css" rel="stylesheet"/>
+
+</head>
+<body>
+<header>
+    <div class="content-wrapper" style="height: 2.5em">
+
+        <div class="float-right">
+            <section id="login">
+
+                @{
+                    var user = Session["user"] as FormSwapDemo.Models.LoginModel;
+                }
+
+                @if (user != null)
+                {
+                    <ul>
+                        <li style="font-weight: bold">Witaj @user.Login!</li>
+                        <li>@Html.ActionLink("Wyloguj się", "Logout", "Application")</li>
+                    </ul>
+                }
+
+
+            </section>
+        </div>
+    </div>
+</header>
+<div id="body">
+    <section class="content-wrapper main-content clear-fix">
+        @using (Html.BeginForm())
+        {
+            @Html.ValidationSummary()
+
+            <fieldset>
+                <legend>Add Contact Form</legend>
+                <h2>Dodaj Kontakt</h2>
+                <ol>
+                    <li>
+                        @Html.LabelFor(m => m.Name)
+                        @Html.TextBoxFor(m => m.Name)
+                    </li>
+                    <li>
+                        @Html.LabelFor(m => m.Surname)
+                        @Html.TextBoxFor(m => m.Surname)
+                    </li>
+                    <li>
+                        @Html.LabelFor(m => m.Phone)
+                        @Html.TextBoxFor(m => m.Phone)
+                    </li>
+                    <li>
+                        @Html.LabelFor(m => m.Address)
+                        @Html.TextBoxFor(m => m.Address)
+                    </li>
+                    <li>
+                    <input type="submit" value="Dodaj Kontakt"/>
+                    <input type="button" value="Powrót" onclick="location.href = '@Url.Action("Menu", "Application")'"/>
+                    <li/>
+                </ol>
+
+            </fieldset>
+        }
+    </section>
+</div>
+</body>
+</html>

@@ -1,0 +1,111 @@
+﻿@using FormSwapDemo.Models
+@model IEnumerable<FormSwapDemo.Models.ContactModel>
+
+@{
+    Layout = null;
+}
+
+
+<script src="../../Scripts/jquery-1.7.1.min.js" type="text/javascript"></script>
+
+@{
+    var grid = new WebGrid(source: Model, canPage: false, canSort: false);
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Osobista Książka Adresowa</title>
+    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
+    <meta name="viewport" content="width=device-width"/>
+    <link href="/Content/site.css" rel="stylesheet"/>
+
+</head>
+<body>
+<header>
+    <div class="content-wrapper" style="height: 2.5em">
+
+        <div class="float-right">
+            <section id="login">
+
+                @{
+                    var user = Session["user"] as FormSwapDemo.Models.LoginModel;
+                }
+
+                @if (user != null)
+                {
+                    <ul>
+                        <li style="font-weight: bold">Witaj @user.Login!</li>
+                        <li>@Html.ActionLink("Wyloguj się", "Logout", "Application")</li>
+                    </ul>
+                }
+            </section>
+        </div>
+    </div>
+</header>
+<div id="body">
+
+    <section class="content-wrapper main-content clear-fix">
+
+
+        <h2>Usuń Wybrane Kontakty</h2>
+
+
+        @if (Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                ContactModel.Contacts.Add(@item.Id);
+            }
+            <h4>Czy jesteś pewien, że chcesz usunać wybrane kontakty?</h4>
+            <div style="overflow: auto">
+
+                @grid.GetHtml(
+                    columns: grid.Columns
+                        (
+                            grid.Column("Name", "Imię"),
+                            grid.Column("Surname", "Nazwisko"),
+                            grid.Column("Phone", "Telefon"),
+                            grid.Column("Address", "Adres")
+                        )
+                    )
+            </div>
+            <p></p>
+            <input type="button" value="Usuń Wybrane Kontakty" onclick="location.href = '@Url.Action("DeleteContactGroup", "Application", Model)'"/>
+        }
+        else
+        {
+            <p>Nie wybrano żadnych kontaktów.</p>
+        }
+
+        @if (true)
+        {
+            <input type="button" value="Powrót" onclick="location.href = '@Url.Action("Menu", "Application")'"/>
+        }
+
+
+
+
+
+
+    </section>
+</div>
+<footer>
+    <div class="content-wrapper">
+        <div class="float-left">
+            <p>&copy; @DateTime.Now.Year - Robert Pasternak </p>
+        </div>
+    </div>
+</footer>
+
+    <script>
+        $(document).ready(function() {
+            $("tr:nth-child(2n)").css("background-color", "#E2E2E2");
+
+        });
+    </script>
+
+</body>
+</html>
+
+

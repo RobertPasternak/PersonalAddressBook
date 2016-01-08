@@ -1,0 +1,142 @@
+﻿
+
+@section featured {
+    <section class="featured">
+        <div class="content-wrapper">
+            <hgroup class="title">
+                <h1>Nie ryzykuj utraty kontaktów</h1>
+            </hgroup>
+            <p>
+                Przechowuj swoje adresy w bezpiecznym miejscu
+            </p>
+        </div>
+    </section>
+}
+
+<div style="margin:20px 0;padding:20px;border:2px dotted #ccc;width:40%;float:left" id="membership-panel" >
+    Trwa wczytywanie panelu...
+</div> 
+
+<div  style="margin:20px;padding:10px 50px;width:30%;float:left;background-color:#fff;font-size:larger">
+    Czy wiesz, że utworzenie konta w serwisie jest calkowicie bezplatne?
+</div>
+
+@section Scripts {
+    @System.Web.Optimization.Scripts.Render("~/bundles/jqueryval")
+
+    <script type="text/javascript">
+        $(function() {
+            loadMembershipView("/account/_login");
+            bindMembershipLinks();
+        });
+
+        function bindMembershipLinks() {
+            $(".loginLink").click(function(ev) {
+                ev.preventDefault();
+                loadMembershipView("/account/_login");
+                return false;
+            });
+
+            $(".registerLink").click(function(ev) {
+                ev.preventDefault();
+                loadMembershipView("/account/_Register");
+                return false;
+            });
+        }
+
+        function loadMembershipView(url) {
+            $.get(url, function(data) {
+                $("#membership-panel").fadeOut(300, function() {
+                    $("#membership-panel").html(data);
+                    prepareLoadedForm();
+                    $("#membership-panel").fadeIn(400);
+                    bindMembershipLinks();
+                });
+
+            });
+        }
+
+
+        function prepareLoadedForm() {
+            var $form = $("#membership-panel").find("form");
+            if ($form.exists()) {
+                // Unbind existing validation
+                $form.unbind();
+                $form.data("validator", null);
+                // Check document for changes
+                $.validator.unobtrusive.parse(document);
+                //bind form event
+                bindFormEvent($form);
+            }
+        }
+
+
+        function bindFormEvent($form) {
+            $form.submit(function(e) {
+                e.preventDefault();
+
+                if ($(this).valid()) {
+                    var url = $(this).attr('action');
+                    $.post(url, $(this).serializeObject(),
+                        function(data) {
+                            if (data.Success == true) {
+                                window.location.href = "Application/Menu";
+                            } else {
+                                if (data.ErrorMessage == "Rejestracja zakończona sukcesem.") {
+                                    loadMembershipView("/account/_login");
+                                    setTimeout(function() { showClientMessage(data.ErrorMessage); }, 2000);
+
+                                } else if (data.ErrorMessage == "Błędne dane logowania.") {
+                                    //tutaj trzeba jakoś wyświetlić
+                                    showClientError(data.ErrorMessage);
+
+                                } else if (data.ErrorMessage == "Wybrana nazwa użytkownika jest już zajęta.") {
+                                    showClientError(data.ErrorMessage);
+
+                                }
+
+                            }
+                        });
+
+                }
+            });
+        }
+
+        function showClientError(message) {
+
+
+            var $div = $('.validation-summary-errors');
+            $div.find('li').remove();
+            setTimeout(function() { $div.remove(); }, 5000);
+            if ($div.length == 0) {
+                $div = $('<div class="validation-summary-errors">');
+                $div.html('<ul></ul>');
+                // Put the $div somewhere
+                $div.prependTo($('#membership-panel'));
+            }
+            $div.find('ul').prepend($('<li>').text(message));
+        }
+
+
+        // $(".validation-summary-valid ul").prepend($('<li class="validation-summary-errors" style="color: green">').text(message));
+
+
+        function showClientMessage(message) {
+
+
+            var $div = $('.validation-summary-errors');
+            $div.find('li').remove();
+            setTimeout(function() { $div.remove(); }, 5000);
+            if ($div.length == 0) {
+                $div = $('<div class="validation-summary-errors">');
+                $div.html('<ul style="color:green"></ul>');
+                // Put the $div somewhere
+                $div.prependTo($('#membership-panel'));
+            }
+            $div.find('ul').prepend($('<li>').text(message));
+
+        }
+
+    </script>
+}
+

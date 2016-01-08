@@ -1,0 +1,95 @@
+﻿@section featured {
+    <section class="featured">
+        <div class="content-wrapper">
+            <hgroup class="title">
+                <h1>Form Swap Demo</h1>
+            </hgroup>
+            <p>
+               Click on the Click on Register or Login to swap the form
+            </p>
+        </div>
+    </section>
+}
+
+<div style="margin:20px 0;padding:20px;border:2px dotted #ccc;width:40%;float:left" id="membership-panel" >
+    Forms will load here...
+</div> 
+
+<div  style="margin:20px;padding:10px 20px;width:30%;float:left;background-color:#fff;font-size:larger">
+    Forms can exist as single/independent sections, embedded between other content
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script type="text/javascript">
+        $(function () {
+            loadMembershipView("/account/_login");
+            bindMembershipLinks();
+        });
+
+        function bindMembershipLinks() {
+            $(".loginLink").click(function (ev) {
+                ev.preventDefault();
+                loadMembershipView("/account/_login");
+                return false;
+            });
+
+            $(".registerLink").click(function (ev) {
+                ev.preventDefault();
+                loadMembershipView("/account/_Register");
+                return false;
+            });
+        }
+
+        function loadMembershipView(url) {
+            $.get(url, function (data) {
+                $("#membership-panel").fadeOut(300, function () {
+                    $("#membership-panel").html(data);
+                    prepareLoadedForm();
+                    $("#membership-panel").fadeIn(400);
+                    bindMembershipLinks();                    
+                });
+                
+            });
+        }
+
+
+        function prepareLoadedForm() {
+            var $form = $("#membership-panel").find("form");
+            if ($form.exists()) {
+                // Unbind existing validation
+                $form.unbind();
+                $form.data("validator", null);
+                // Check document for changes
+                $.validator.unobtrusive.parse(document);
+                //bind form event
+                bindFormEvent($form);
+            }
+        }
+
+
+        function bindFormEvent($form) {
+            $form.submit(function (e) {
+                e.preventDefault();
+
+                if ($(this).valid()) {
+                    var url = $(this).attr('action');
+                    $.post(url, $(this).serializeObject(),
+                        function (data) {
+                            if (data.Success == true) {
+                                alert('SUCCESS: Everything went ok');
+                            }
+                            else {
+                                alert('ERROR: ' + data.ErrorMessage);
+                            }
+                        });
+
+                }
+            });
+        }
+
+
+    </script>
+}
+
