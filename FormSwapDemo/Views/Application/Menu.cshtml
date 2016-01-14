@@ -91,7 +91,10 @@
                                 grid.Column("Name", "Imię"),
                                 grid.Column("Surname", "Nazwisko"),
                                 grid.Column("Phone", "Telefon"),
-                                grid.Column("Address", "Adres"),
+                                grid.Column("Street", "Ulica"),
+                                grid.Column("City", "Miasto"),
+                                grid.Column("Country", "Kraj"),
+                                grid.Column("PostalCode", "Kod Pocztowy"),
                                 grid.Column("", format: (item) => Html.ActionLink("Edytuj", "EditContact", "Application", new {id = item.Id}, null)),
                                 grid.Column("", format: (item) => Html.ActionLink("Usuń", "DeleteContact", "Application", new {id = item.Id}, null))
                             )
@@ -142,7 +145,7 @@
 <footer>
     <div class="content-wrapper">
         <div class="float-left">
-            <p>&copy; @DateTime.Now.Year - Robert Pasternak </p>
+            <p>&copy; @DateTime.Now.Year - Osobista Książka Adresowa </p>
         </div>
     </div>
 </footer>

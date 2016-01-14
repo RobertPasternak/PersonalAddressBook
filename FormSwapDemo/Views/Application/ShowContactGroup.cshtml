@@ -66,7 +66,10 @@
                             grid.Column("Name", "Imię"),
                             grid.Column("Surname", "Nazwisko"),
                             grid.Column("Phone", "Telefon"),
-                            grid.Column("Address", "Adres")
+                            grid.Column("Street", "Ulica"),
+                            grid.Column("City", "Miasto"),
+                            grid.Column("Country", "Kraj"),
+                            grid.Column("PostalCode", "Kod Pocztowy")
                         )
                     )
             </div>
@@ -93,17 +96,17 @@
 <footer>
     <div class="content-wrapper">
         <div class="float-left">
-            <p>&copy; @DateTime.Now.Year - Robert Pasternak </p>
+            <p>&copy; @DateTime.Now.Year - Osobista Książka Adresowa </p>
         </div>
     </div>
 </footer>
 
-    <script>
-        $(document).ready(function() {
-            $("tr:nth-child(2n)").css("background-color", "#E2E2E2");
+<script>
+    $(document).ready(function() {
+        $("tr:nth-child(2n)").css("background-color", "#E2E2E2");
 
-        });
-    </script>
+    });
+</script>
 
 </body>
 </html>

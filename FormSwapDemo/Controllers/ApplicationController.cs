@@ -14,7 +14,7 @@ namespace FormSwapDemo.Controllers
         public ActionResult Menu(string condition)
         {
             ViewData["SearchCondition"] = condition;
-            
+
             if (Session["user"] == null)
             {
                 return RedirectToAction("Index", "Home");
@@ -52,7 +52,6 @@ namespace FormSwapDemo.Controllers
                     reader = cmd.ExecuteReader();
 
 
-
                     while (reader.Read())
                     {
                         var contactData = new ContactModel
@@ -61,17 +60,23 @@ namespace FormSwapDemo.Controllers
                             Name = (string) reader["Name"],
                             Surname = (string) reader["Surname"],
                             Phone = (string) reader["Phone"],
-                            Address = (string) reader["Address"]
+                            Street = (string) reader["Street"],
+                            City = (string) reader["City"],
+                            PostalCode = (string) reader["PostalCode"],
+                            Country = (string) reader["Country"]
                         };
 
                         contacts.Add(contactData);
                     }
-
                 }
                 else
                 {
-
-                    cmd = new SqlCommand("SELECT * FROM [Contacts] WHERE  [UserId] = @u  AND ( [Name] LIKE @n OR [Surname] LIKE @n OR [Phone] LIKE @n OR [Address] LIKE @n )") { Connection = conn };                   
+                    cmd =
+                        new SqlCommand(
+                            "SELECT * FROM [Contacts] WHERE  [UserId] = @u  AND ( [Name] LIKE @n OR [Surname] LIKE @n OR [Phone] LIKE @n OR [Street] LIKE @n OR [City] LIKE @n  OR [PostalCode] LIKE @n  OR [Country] LIKE @n )")
+                        {
+                            Connection = conn
+                        };
                     cmd.Parameters.Add(new SqlParameter("@u", SqlDbType.Int)).Value = userId;
                     cmd.Parameters.Add(new SqlParameter("@n", SqlDbType.NVarChar)).Value = '%' + condition + '%';
                     reader = cmd.ExecuteReader();
@@ -79,11 +84,14 @@ namespace FormSwapDemo.Controllers
                     {
                         var contactData = new ContactModel
                         {
-                            Id = (int)reader["Id"],
-                            Name = (string)reader["Name"],
-                            Surname = (string)reader["Surname"],
-                            Phone = (string)reader["Phone"],
-                            Address = (string)reader["Address"]
+                            Id = (int) reader["Id"],
+                            Name = (string) reader["Name"],
+                            Surname = (string) reader["Surname"],
+                            Phone = (string) reader["Phone"],
+                            Street = (string) reader["Street"],
+                            City = (string) reader["City"],
+                            PostalCode = (string) reader["PostalCode"],
+                            Country = (string) reader["Country"]
                         };
 
                         contacts.Add(contactData);
@@ -217,18 +225,25 @@ namespace FormSwapDemo.Controllers
 
                         var addCmd =
                             new SqlCommand(
-                                "INSERT INTO [Contacts] ([Name], [Surname], [Phone], [Address], [UserId]) VALUES (@n, @s, @p, @a, @u)")
+                                "INSERT INTO [Contacts] ([Name], [Surname], [Phone], [Street], [City], [PostalCode], [Country], [UserId]) VALUES (@name, @surname, @phone, @street, @city, @postal, @country, @user)")
                             {
                                 Connection = conn
                             };
                         addCmd.Parameters.Clear();
-                        addCmd.Parameters.Add(new SqlParameter("@n", SqlDbType.NVarChar)).Value = contactModel.Name;
-                        addCmd.Parameters.Add(new SqlParameter("@s", SqlDbType.NVarChar)).Value = contactModel.Surname;
-                        addCmd.Parameters.Add(new SqlParameter("@p", SqlDbType.NVarChar)).Value =
+                        addCmd.Parameters.Add(new SqlParameter("@name", SqlDbType.NVarChar)).Value = contactModel.Name;
+                        addCmd.Parameters.Add(new SqlParameter("@surname", SqlDbType.NVarChar)).Value =
+                            contactModel.Surname;
+                        addCmd.Parameters.Add(new SqlParameter("@phone", SqlDbType.NVarChar)).Value =
                             contactModel.Phone;
-                        addCmd.Parameters.Add(new SqlParameter("@a", SqlDbType.NVarChar)).Value =
-                            contactModel.Address;
-                        addCmd.Parameters.Add(new SqlParameter("@u", SqlDbType.Int)).Value = userId;
+                        addCmd.Parameters.Add(new SqlParameter("@street", SqlDbType.NVarChar)).Value =
+                            contactModel.Street;
+                        addCmd.Parameters.Add(new SqlParameter("@city", SqlDbType.NVarChar)).Value =
+                            contactModel.City;
+                        addCmd.Parameters.Add(new SqlParameter("@postal", SqlDbType.NVarChar)).Value =
+                            contactModel.PostalCode;
+                        addCmd.Parameters.Add(new SqlParameter("@country", SqlDbType.NVarChar)).Value =
+                            contactModel.Country;
+                        addCmd.Parameters.Add(new SqlParameter("@user", SqlDbType.Int)).Value = userId;
 
                         addCmd.ExecuteNonQuery();
                         conn.Close();
@@ -279,17 +294,26 @@ namespace FormSwapDemo.Controllers
 
                     var updCmd =
                         new SqlCommand(
-                            "UPDATE [Contacts] SET [Name] = @n , [Surname] = @s , [Phone] = @p , [Address] = @a WHERE [Id] = @i")
+                            "UPDATE [Contacts] SET [Name] = @name , [Surname] = @surname , [Phone] = @phone , [Street] = @street , [City] = @city , [PostalCode] = @postal , [Country] = @country WHERE [Id] = @id")
                         {
                             Connection = conn
                         };
                     conn.Open();
                     updCmd.Parameters.Clear();
-                    updCmd.Parameters.Add(new SqlParameter("@n", SqlDbType.NVarChar)).Value = contactModel.Name;
-                    updCmd.Parameters.Add(new SqlParameter("@s", SqlDbType.NVarChar)).Value = contactModel.Surname;
-                    updCmd.Parameters.Add(new SqlParameter("@p", SqlDbType.NVarChar)).Value = contactModel.Phone;
-                    updCmd.Parameters.Add(new SqlParameter("@a", SqlDbType.NVarChar)).Value = contactModel.Address;
-                    updCmd.Parameters.Add(new SqlParameter("@i", SqlDbType.Int)).Value = contactModel.Id;
+                    updCmd.Parameters.Add(new SqlParameter("@name", SqlDbType.NVarChar)).Value = contactModel.Name;
+                    updCmd.Parameters.Add(new SqlParameter("@surname", SqlDbType.NVarChar)).Value =
+                        contactModel.Surname;
+                    updCmd.Parameters.Add(new SqlParameter("@phone", SqlDbType.NVarChar)).Value =
+                        contactModel.Phone;
+                    updCmd.Parameters.Add(new SqlParameter("@street", SqlDbType.NVarChar)).Value =
+                        contactModel.Street;
+                    updCmd.Parameters.Add(new SqlParameter("@city", SqlDbType.NVarChar)).Value =
+                        contactModel.City;
+                    updCmd.Parameters.Add(new SqlParameter("@postal", SqlDbType.NVarChar)).Value =
+                        contactModel.PostalCode;
+                    updCmd.Parameters.Add(new SqlParameter("@country", SqlDbType.NVarChar)).Value =
+                        contactModel.Country;
+                    updCmd.Parameters.Add(new SqlParameter("@id", SqlDbType.Int)).Value = contactModel.Id;
                     updCmd.ExecuteNonQuery();
                     conn.Close();
                     return RedirectToAction("Menu", "Application");
@@ -382,7 +406,10 @@ namespace FormSwapDemo.Controllers
                                 Name = (string) reader["Name"],
                                 Surname = (string) reader["Surname"],
                                 Phone = (string) reader["Phone"],
-                                Address = (string) reader["Address"]
+                                Street = (string) reader["Street"],
+                                City = (string) reader["City"],
+                                PostalCode = (string) reader["PostalCode"],
+                                Country = (string) reader["Country"]
                             };
 
                             contacts.Add(contactData);

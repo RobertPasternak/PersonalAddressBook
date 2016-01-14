@@ -50,7 +50,6 @@ namespace FormSwapDemo.Models
                 }
                 else
                 {
-
                     //zwiększ liczbę nieudanych podejść do logowania
                     var updCmd =
                         new SqlCommand("UPDATE [Users] SET [LoginAttempts] = [LoginAttempts] + 1 WHERE [Login] = @l")
@@ -88,11 +87,97 @@ namespace FormSwapDemo.Models
         [Display(Name = "Potwierdź Hasło")]
         [Compare("Password", ErrorMessage = "Hasła nie są identyczne.")]
         public string ConfirmPassword { get; set; }
+
+        [Required]
+        [Display(Name = "Sekretne Pytanie")]
+        public string SecretQuestion { get; set; }
+
+        [Required]
+        [Display(Name = "Sekretna Odpowiedź")]
+        public string SecretAnswer { get; set; }
     }
+
+    public class RemindModel
+    {
+        public int Id { get; set; }
+
+        [Display(Name = "Login")]
+        public string Login { get; set; }
+
+        [Display(Name = "Hasło")]
+        public string Password { get; set; }
+
+        [Display(Name = "Sekretne Pytanie")]
+        public string SecretQuestion { get; set; }
+
+        [Display(Name = "Poprawna Sekretna Odpowiedź")]
+        public string SecretAnswer { get; set; }
+
+        [Display(Name = "Sekretna Odpowiedź")]
+        public string UserSecretAnswer { get; set; }
+
+
+        public static RemindModel GetUserData(string userLogin)
+        {
+            var conn
+                =
+                new SqlConnection(
+                    "Data Source = (LocalDB)\\MSSQLLocalDB; AttachDbFilename = |DataDirectory|PersonalAdressBookDatabase.mdf; MultipleActiveResultSets = True; Integrated Security = True; Connect Timeout = 30");
+
+            var cmd = new SqlCommand("SELECT * FROM [Users] WHERE [Login] = @u")
+            {
+                Connection = conn
+            };
+            conn.Open();
+            cmd.Parameters.Add(new SqlParameter("@u", SqlDbType.NVarChar)).Value = userLogin;
+            var reader = cmd.ExecuteReader();
+
+
+            if (reader.Read())
+            {
+                var remindModel = new RemindModel
+                {
+                    SecretQuestion = (string) reader["SecretQuestion"]
+                };
+
+                conn.Close();
+                return remindModel;
+            }
+            return null;
+        }
+
+
+        public static bool IsUserAnswerCorrect(string userLogin, string userAnswer)
+        {
+            var conn
+                =
+                new SqlConnection(
+                    "Data Source = (LocalDB)\\MSSQLLocalDB; AttachDbFilename = |DataDirectory|PersonalAdressBookDatabase.mdf; MultipleActiveResultSets = True; Integrated Security = True; Connect Timeout = 30");
+
+            var cmd = new SqlCommand("SELECT * FROM [Users] WHERE [Login] = @login AND [SecretAnswer] = @answer")
+            {
+                Connection = conn
+            };
+            conn.Open();
+            cmd.Parameters.Add(new SqlParameter("@login", SqlDbType.NVarChar)).Value = userLogin;
+            cmd.Parameters.Add(new SqlParameter("@answer", SqlDbType.NVarChar)).Value = userAnswer;
+            var reader = cmd.ExecuteReader();
+            if (reader.HasRows)
+            {
+                conn.Close();
+                return true;
+            }
+            else
+            {
+                conn.Close();
+                return false;
+            }
+        }
+    }
+
 
     public class ProfileModel
     {
-
         public string Login { get; set; }
 
         [Required]
@@ -116,11 +201,14 @@ namespace FormSwapDemo.Models
             var conn =
                 new SqlConnection(
                     "Data Source = (LocalDB)\\MSSQLLocalDB; AttachDbFilename = |DataDirectory|PersonalAdressBookDatabase.mdf; MultipleActiveResultSets = True; Integrated Security = True; Connect Timeout = 30");
-            var cmd = new SqlCommand("SELECT * FROM [Users] WHERE [Login] = @l AND [LoginAttempts] > 4") {Connection = conn};
+            var cmd = new SqlCommand("SELECT * FROM [Users] WHERE [Login] = @l AND [LoginAttempts] > 4")
+            {
+                Connection = conn
+            };
             cmd.Parameters.Add(new SqlParameter("@l", SqlDbType.NVarChar)).Value = login;
             conn.Open();
             var reader = cmd.ExecuteReader();
-            
+
             if (reader.HasRows)
             {
                 conn.Close();
@@ -131,22 +219,20 @@ namespace FormSwapDemo.Models
                 conn.Close();
                 return false;
             }
-
         }
 
         public static int GetNumberOfAttempts(string login)
         {
-
             var conn =
                 new SqlConnection(
                     "Data Source = (LocalDB)\\MSSQLLocalDB; AttachDbFilename = |DataDirectory|PersonalAdressBookDatabase.mdf; MultipleActiveResultSets = True; Integrated Security = True; Connect Timeout = 30");
-            var cmd = new SqlCommand("SELECT * FROM [Users] WHERE [Login] = @l") { Connection = conn };
+            var cmd = new SqlCommand("SELECT * FROM [Users] WHERE [Login] = @l") {Connection = conn};
             cmd.Parameters.Add(new SqlParameter("@l", SqlDbType.NVarChar)).Value = login;
             conn.Open();
             var reader = cmd.ExecuteReader();
             if (reader.Read())
             {
-                int attempts  = (int) reader["LoginAttempts"];                
+                int attempts = (int) reader["LoginAttempts"];
                 conn.Close();
                 return attempts;
             }

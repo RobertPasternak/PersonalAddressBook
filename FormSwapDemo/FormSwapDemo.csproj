@@ -326,12 +326,15 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Web.config" />
+    <None Include="Views\Home\RemindPasswordStep1.cshtml" />
     <None Include="Views\Application\AddContact.cshtml" />
     <None Include="Views\Application\DeleteContact.cshtml" />
     <None Include="Views\Application\ShowContactGroup.cshtml" />
     <None Include="Views\Application\EditContact.cshtml" />
     <None Include="Views\Application\Menu.cshtml" />
     <Content Include="Views\Application\UserProfile.cshtml" />
+    <None Include="Views\Home\RemindPasswordStep2.cshtml" />
+    <None Include="Views\Home\RemindPasswordStep3.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

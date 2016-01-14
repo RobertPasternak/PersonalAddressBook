@@ -23,7 +23,7 @@ namespace FormSwapDemo.Controllers
 
         [AllowAnonymous]
         public PartialViewResult _Login()
-        {            
+        {
             return PartialView();
         }
 
@@ -52,18 +52,12 @@ namespace FormSwapDemo.Controllers
                     ModelState.AddModelError("", "Błędne dane logowania.");
                     return Json(JsonResponseFactory.ErrorResponse("Błędne dane logowania."), JsonRequestBehavior.DenyGet);
                 }
-                
-                
-
             }
             else
             {
                 return Json(JsonResponseFactory.ErrorResponse(""), JsonRequestBehavior.DenyGet);
             }
         }
-
-
-
 
 
         //
@@ -89,7 +83,7 @@ namespace FormSwapDemo.Controllers
                     new SqlConnection(
                         "Data Source = (LocalDB)\\MSSQLLocalDB; AttachDbFilename = |DataDirectory|PersonalAdressBookDatabase.mdf; MultipleActiveResultSets = True; Integrated Security = True; Connect Timeout = 30");
 
-                var cmd = new SqlCommand("SELECT * FROM [Users] WHERE [Login] = @l ") { Connection = conn };
+                var cmd = new SqlCommand("SELECT * FROM [Users] WHERE [Login] = @l ") {Connection = conn};
                 cmd.Parameters.Add(new SqlParameter("@l", SqlDbType.NVarChar)).Value = registerModel.Login;
                 conn.Open();
                 var reader = cmd.ExecuteReader();
@@ -98,15 +92,14 @@ namespace FormSwapDemo.Controllers
                 if (reader.HasRows)
                 {
                     conn.Close();
-                    return Json(JsonResponseFactory.ErrorResponse("Wybrana nazwa użytkownika jest już zajęta."), JsonRequestBehavior.DenyGet);
+                    return Json(JsonResponseFactory.ErrorResponse("Wybrana nazwa użytkownika jest już zajęta."),
+                        JsonRequestBehavior.DenyGet);
                 }
                 else
                 {
-
-
                     var addCmd =
                         new SqlCommand(
-                            "INSERT INTO [Users] ([Login], [Password], [LoginAttempts]) VALUES (@login, @password, @attempts)")
+                            "INSERT INTO [Users] ([Login], [Password], [LoginAttempts], [SecretQuestion], [SecretAnswer]) VALUES (@login, @password, @attempts, @question, @answer)")
                         {
                             Connection = conn
                         };
@@ -116,6 +109,10 @@ namespace FormSwapDemo.Controllers
                     addCmd.Parameters.Add(new SqlParameter("@password", SqlDbType.NVarChar)).Value =
                         registerModel.Password;
                     addCmd.Parameters.Add(new SqlParameter("@attempts", SqlDbType.Int)).Value = 0;
+                    addCmd.Parameters.Add(new SqlParameter("@question", SqlDbType.NVarChar)).Value =
+                        registerModel.SecretQuestion;
+                    addCmd.Parameters.Add(new SqlParameter("@answer", SqlDbType.NVarChar)).Value =
+                        registerModel.SecretAnswer;
                     addCmd.ExecuteNonQuery();
                     conn.Close();
                     return Json(JsonResponseFactory.ErrorResponse("Rejestracja zakończona sukcesem."),
@@ -127,5 +124,8 @@ namespace FormSwapDemo.Controllers
                 return Json(JsonResponseFactory.ErrorResponse(""), JsonRequestBehavior.DenyGet);
             }
         }
+
+
+
     }
 }

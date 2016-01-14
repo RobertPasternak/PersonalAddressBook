@@ -64,8 +64,20 @@
                             @Html.TextBoxFor(m => m.Phone, new { @readonly = "readonly" })
                         </li>
                         <li>
-                            @Html.LabelFor(m => m.Address)
-                            @Html.TextBoxFor(m => m.Address, new { @readonly = "readonly" })
+                            @Html.LabelFor(m => m.Street)
+                            @Html.TextBoxFor(m => m.Street, new {@readonly = "readonly"})
+                        </li>
+                        <li>
+                            @Html.LabelFor(m => m.City)
+                            @Html.TextBoxFor(m => m.City, new {@readonly = "readonly"})
+                        </li>
+                        <li>
+                            @Html.LabelFor(m => m.Country)
+                            @Html.TextBoxFor(m => m.Country, new { @readonly = "readonly" })
+                        </li>
+                        <li>
+                            @Html.LabelFor(m => m.PostalCode)
+                            @Html.TextBoxFor(m => m.PostalCode, new { @readonly = "readonly" })
                         </li>
                         <li>
                             <input type="submit" value="Usuń Kontakt" />

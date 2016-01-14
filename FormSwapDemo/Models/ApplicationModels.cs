@@ -25,10 +25,24 @@ namespace FormSwapDemo.Models
         public string Phone { get; set; }
 
         [Required]
-        [Display(Name = "Adres")]
-        public string Address { get; set; }
+        [Display(Name = "Ulica")]
+        public string Street { get; set; }
+
+        [Required]
+        [Display(Name = "Miasto")]
+        public string City { get; set; }
+
+        [Required]
+        [Display(Name = "Kod Pocztowy")]
+        public string PostalCode { get; set; }
+
+        [Required]
+        [Display(Name = "Kraj")]
+        public string Country { get; set; }
+
 
         public static List<int> Contacts = new List<int>();
+
 
         public List<int> GetContactsList()
         {           
@@ -60,7 +74,10 @@ namespace FormSwapDemo.Models
                     Name = (string) reader["Name"],
                     Surname = (string) reader["Surname"],
                     Phone = (string) reader["Phone"],
-                    Address = (string) reader["Address"]
+                    Street = (string) reader["Street"],
+                    City = (string)reader["City"],
+                    PostalCode = (string)reader["PostalCode"],
+                    Country = (string)reader["Country"]
                 };
 
                 conn.Close();
